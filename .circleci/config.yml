@@ -65,7 +65,7 @@ jobs:
     docker:
       - image: circleci/openjdk:8-jdk
 
-    working_directory: ~/repo
+    working_directory: ~/deploy
 
     steps:
       - attach_workspace:
@@ -73,7 +73,10 @@ jobs:
 
       - run :
           name : Setup heroku
-          command : bash setup-heroku.sh
+          command : |
+            pwd
+            ls -la
+            bash /tmp/setup-heroku.sh
 
       - run :
           name : Deploy the Release Jar Artifcat to Heroku

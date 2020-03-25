@@ -73,7 +73,7 @@ jobs:
 
       - run :
           name : Setup heroku
-          command : bash tmp/setup-heroku.sh
+          command : bash setup-heroku.sh
 
       - run :
           name : Deploy the Release Jar Artifcat to Heroku

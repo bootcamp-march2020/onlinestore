@@ -43,3 +43,8 @@ jobs:
 
       - store_test_results:
           path : ~/repo/build/test-results
+
+      -run: gradle bootJar
+
+      - store_artifacts:
+          path : ~/repo/build/libs

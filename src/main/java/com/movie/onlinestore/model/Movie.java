@@ -17,15 +17,42 @@ public class Movie {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long mid;
-    @Column(name = "title") private String title;
-    @Column(name = "description") private String description;
-    @Column(name = "rated") private  String rated;
-    @Column(name = "year") private Integer year;
-    @Column(name = "poster_url") private String  posterUrlString;
-    @Column(name = "release_date") private Date releaseDate;
-    @Column(name = "ratings") private Double ratings;
-    @Column(name = "type") private String type;
 
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "rated")
+    private  String rated;
+
+    @Column(name = "year")
+    private Integer year;
+
+    @Column(name = "poster_url")
+    private String  posterUrlString;
+
+    @Column(name = "release_date")
+    private Date releaseDate;
+
+    @Column(name = "ratings")
+    private Double ratings;
+
+    @Column(name = "type")
+    private String type;
+
+    public Movie(Long mid, String title, String description, String rated, Integer year, String posterUrlString, Date releaseDate, Double ratings, String type) {
+        this.mid = mid;
+        this.title = title;
+        this.description = description;
+        this.rated = rated;
+        this.year = year;
+        this.posterUrlString = posterUrlString;
+        this.releaseDate = releaseDate;
+        this.ratings = ratings;
+        this.type = type;
+    }
 
     public Long getMid() {
         return mid;

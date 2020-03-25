@@ -52,7 +52,7 @@ jobs:
       - run:
           name: Copy Release Jar and heroku setup script to temp workspace
           command: |
-            cp ~/repo/build/libs/spring-boot-ci-cd-0.0.1-SNAPSHOT.jar /temp/app-release.jar
+            cp ~/repo/build/libs/onlinestore-0.0.1-SNAPSHOT.jar /temp/app-release.jar
             cp .circleci/setup-heroku.sh /temp/setup-heroku.sh
 
   heroku_production_deploy:

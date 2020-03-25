@@ -42,6 +42,9 @@ public class Movie {
     @Column(name = "type")
     private String type;
 
+    public Movie() {
+    }
+
     public Movie(Long mid, String title, String description, String rated, Integer year, String posterUrlString, Date releaseDate, Double ratings, String type) {
         this.mid = mid;
         this.title = title;

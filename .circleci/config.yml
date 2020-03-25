@@ -43,3 +43,56 @@ jobs:
 
       - store_test_results:
           path : ~/repo/build/test-results
+
+      - run: gradle bootJar
+
+      - store_artifacts:
+          path : ~/repo/build/libs
+
+      - run:
+          name: Copy Release Jar and heroku setup script to temp workspace
+          command: |
+            cp ~/repo/build/libs/onlinestore-0.0.1-SNAPSHOT.jar /tmp/app-release.jar
+            cp .circleci/setup-heroku.sh /tmp/setup-heroku.sh
+
+      - persist_to_workspace:
+          root : /tmp
+          paths:
+            - app-release.jar
+            - setup-heroku.sh
+
+  heroku_production_deploy:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/deploy
+
+    steps:
+      - attach_workspace:
+          at: /tmp
+
+      - run :
+          name : Setup heroku
+          command : |
+            pwd
+            ls -la
+            bash /tmp/setup-heroku.sh
+
+      - run :
+          name : Deploy the Release Jar Artifcat to Heroku
+          command : |
+            cp /tmp/app-release.jar .
+            heroku plugins:install heroku-cli-deploy
+            heroku plugins:install heroku-cli-deploy # when debugging on circle image, first run succeeded, but did not make plugin available
+            heroku deploy:jar app-release.jar --app $HEROKU_APP_NAME
+
+
+
+workflows:
+  version: 2
+  build_and_heroku_deploy:
+    jobs:
+      - build
+      - heroku_production_deploy:
+          requires:
+            - build

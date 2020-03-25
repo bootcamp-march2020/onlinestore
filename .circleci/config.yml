@@ -67,5 +67,5 @@ workflows:
     jobs:
       - build
       - heroku_production_deploy:
-        requires:
-          - build
+          requires:
+            - build

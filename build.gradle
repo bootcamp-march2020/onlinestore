@@ -14,10 +14,14 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	runtimeOnly 'mysql:mysql-connector-java'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtime("org.postgresql:postgresql")
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+	testCompile group: 'junit', name: 'junit', version: '4.12'
+	testCompile("com.h2database:h2")
+	testCompile 'org.mockito:mockito-core:2.7.22'
 }
 
 test {

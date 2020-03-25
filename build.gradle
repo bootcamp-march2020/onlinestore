@@ -22,6 +22,8 @@ dependencies {
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile("com.h2database:h2")
 	testCompile 'org.mockito:mockito-core:2.7.22'
+	implementation "org.flywaydb:flyway-core:6.3.2"
+
 }
 
 test {

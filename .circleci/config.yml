@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - checkout
-      - run : bash echo "Doing heroku_production_deploy"
+      - run : bash .circleci/test.sh
 
 
 
@@ -67,3 +67,5 @@ workflows:
     jobs:
       - build
       - heroku_production_deploy
+        requires:
+          - build

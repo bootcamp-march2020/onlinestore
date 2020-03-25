@@ -1,9 +1,11 @@
 
 
 # Set up db in local machine
-brew install postgressql
+`brew install postgresql`
 
-psql postgres
+`brew services start postgresql`
+
+`psql postgres`
 
 #postgressql command:
 

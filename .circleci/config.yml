@@ -74,6 +74,14 @@ jobs:
           name : Setup heroku
           command : bash .circleci/setup-heroku.sh
 
+      - run :
+          name : Deploy the Release Jar Artifcat to Heroku
+          command : |
+            cp /tmp/app-release.jar .
+            heroku plugins:install heroku-cli-deploy
+            heroku plugins:install heroku-cli-deploy # when debugging on circle image, first run succeeded, but did not make plugin available
+            heroku deploy:jar app-release.jar --app $HEROKU_APP_NAME
+
 
 
 workflows:

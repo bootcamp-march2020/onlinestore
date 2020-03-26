@@ -42,10 +42,14 @@ public class Movie {
     @Column(name = "type")
     private String type;
 
+    @OneToOne
+    @JoinColumn(name = "pricing_category_id")
+    private PricingCategory pricingCategory;
+
     public Movie() {
     }
 
-    public Movie(Long mid, String title, String description, String rated, Integer year, String posterUrlString, Date releaseDate, Double ratings, String type) {
+    public Movie(Long mid, String title, String description, String rated, Integer year, String posterUrlString, Date releaseDate, Double ratings, String type, PricingCategory pricingCategory) {
         this.mid = mid;
         this.title = title;
         this.description = description;
@@ -55,6 +59,7 @@ public class Movie {
         this.releaseDate = releaseDate;
         this.ratings = ratings;
         this.type = type;
+        this.pricingCategory = pricingCategory;
     }
 
     public Long getMid() {
@@ -127,5 +132,13 @@ public class Movie {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public PricingCategory getPricingCategory() {
+        return pricingCategory;
+    }
+
+    public void setPricingCategory(PricingCategory pricingCategory) {
+        this.pricingCategory = pricingCategory;
     }
 }

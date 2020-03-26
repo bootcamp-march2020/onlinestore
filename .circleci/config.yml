@@ -96,3 +96,6 @@ workflows:
       - heroku_qa_deploy:
           requires:
             - build
+          filters:
+            branches:
+              only : master

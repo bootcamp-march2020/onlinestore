@@ -23,7 +23,4 @@ public class MovieController {
         return movieRepository.findAll();
     }
 
-    public void setRepository(MovieRepository movieRepository) {
-        this.movieRepository = movieRepository;
-    }
 }

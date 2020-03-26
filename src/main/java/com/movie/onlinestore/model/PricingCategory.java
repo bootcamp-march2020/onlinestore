@@ -79,4 +79,13 @@ public class PricingCategory {
     public void setAdditionalCost(Double additionalCost) {
         this.additionalCost = additionalCost;
     }
+
+    public Double calculateCost(Integer numberOfDays){
+        Double cost = this.initalCost;
+        if(numberOfDays > this.cutoffDays){
+            Integer remainingDays = numberOfDays - this.cutoffDays;
+            cost += (remainingDays * this.additionalCost);
+        }
+        return cost;
+    }
 }

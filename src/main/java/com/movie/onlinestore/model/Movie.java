@@ -141,4 +141,8 @@ public class Movie {
     public void setPricingCategory(PricingCategory pricingCategory) {
         this.pricingCategory = pricingCategory;
     }
+
+    public Double calculateCost(Integer numberOfDays){
+        return this.pricingCategory.calculateCost(numberOfDays);
+    }
 }

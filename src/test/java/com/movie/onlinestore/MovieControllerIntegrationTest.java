@@ -33,7 +33,7 @@ public class MovieControllerIntegrationTest {
 
         MovieController movieController = new MovieController();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/movies").contentType(MediaType.TEXT_PLAIN))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/movies").contentType(MediaType.TEXT_PLAIN))
                 .andExpect(status().isOk())
                 .andExpect(content().json(  "[]"));
     }

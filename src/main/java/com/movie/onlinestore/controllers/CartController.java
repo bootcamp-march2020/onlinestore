@@ -18,15 +18,13 @@ public class CartController {
     @Autowired
     MovieRepository movieRepository;
 
-    @RequestMapping( value = "/checkout", method = RequestMethod.POST)
+    @RequestMapping( value = "/api/checkout", method = RequestMethod.POST)
     public Cart checkoutMovies(@RequestBody Map<String, Object>[] payload) {
         Cart cart = new Cart();
         for(Map<String,Object> object : payload){
             Optional<Movie> movieRecord = movieRepository.findById(new Long((Integer) object.get("movieId")));
             Integer numberOfDays = (Integer) object.get("numberOfDays");
-            if(movieRecord.isPresent()) {
-                cart.addMovieToCart(movieRecord.get(), numberOfDays);
-            }
+            movieRecord.ifPresent(movie -> cart.addMovieToCart(movie, numberOfDays));
         }
         return cart;
     }

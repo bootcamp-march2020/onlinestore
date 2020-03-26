@@ -12,15 +12,13 @@ import java.util.List;
 
 
 @Controller
-
 public class MovieController {
     @Autowired
     MovieRepository movieRepository;
 
-    @GetMapping("/movies")
+    @GetMapping("/api/movies")
     @ResponseBody
     public List<Movie> movielist() {
         return movieRepository.findAll();
     }
-
 }

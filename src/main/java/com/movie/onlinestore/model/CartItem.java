@@ -1,5 +1,8 @@
 package com.movie.onlinestore.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CartItem {
 
     private Movie movie;
@@ -16,8 +19,13 @@ public class CartItem {
         return cost;
     }
 
-    public Movie getMovie() {
-        return movie;
+    public Map<String,Object> getMovie() {
+
+        Map<String,Object> movieDetails = new HashMap<>();
+        movieDetails.put("id", movie.getMid());
+        movieDetails.put("title", movie.getTitle());
+
+        return  movieDetails;
     }
 
     public Integer getNumberOfDays() {

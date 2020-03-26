@@ -61,7 +61,7 @@ jobs:
             - app-release.jar
             - setup-heroku.sh
 
-  heroku_production_deploy:
+  heroku_qa_deploy:
     docker:
       - image: circleci/openjdk:8-jdk
 
@@ -93,6 +93,6 @@ workflows:
   build_and_heroku_deploy:
     jobs:
       - build
-      - heroku_production_deploy:
+      - heroku_qa_deploy:
           requires:
             - build

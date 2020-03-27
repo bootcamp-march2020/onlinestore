@@ -12,8 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@Table(name = "order")
-
+@Table(name = "order_item")
 public class OrderItem {
 
     @Id

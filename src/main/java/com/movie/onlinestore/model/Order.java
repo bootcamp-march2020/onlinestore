@@ -13,15 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long oid;
-
-    @OneToMany
-    @JoinColumn(name = "order_id")
-    private List<OrderItem> orderItems;
 
     @Column(name = "customer_id")
     private Long customerId;
@@ -35,7 +31,9 @@ public class Order {
     @Column(name = "order_date")
     private Date orderDate;
 
-
+    @OneToMany
+    @JoinColumn(name = "order_id")
+    private List<OrderItem> orderItems;
 
     public Order() {
     }
@@ -84,5 +82,13 @@ public class Order {
 
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }

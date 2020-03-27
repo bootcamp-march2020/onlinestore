@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.text.DecimalFormat;
 
 @Entity
 @AllArgsConstructor
@@ -87,5 +88,15 @@ public class PricingCategory {
             cost += (remainingDays * this.additionalCost);
         }
         return cost;
+    }
+
+    public String getInitialCostString() {
+        DecimalFormat format = new DecimalFormat("0.###");
+        return String.format("$%s for %d days",format.format(this.initalCost),this.cutoffDays);
+    }
+
+    public String getAditionalCostString() {
+        DecimalFormat format = new DecimalFormat("0.###");
+        return String.format("and $%s afterwards",format.format(this.additionalCost));
     }
 }

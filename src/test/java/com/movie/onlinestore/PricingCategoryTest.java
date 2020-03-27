@@ -28,23 +28,23 @@ public class PricingCategoryTest {
     }
 
     @Test
-    public void testGetAditionalCostStringShouldReturnStringWithAditionalCost(){
+    public void testGetAdditionalCostStringShouldReturnStringWithAdditionalCost(){
         PricingCategory pricingCategory = new PricingCategory(1L,3D,5,1D);
         String expectedAditionalCostString = "and $1 afterwards";
-        assertEquals(expectedAditionalCostString,pricingCategory.getAditionalCostString());
+        assertEquals(expectedAditionalCostString,pricingCategory.getAdditionalCostString());
     }
 
     @Test
-    public void testGetAditionalCostStringWithAditionalCostHasOneDecimalValues(){
+    public void testGetAdditionalCostStringWithAdditionalCostHasOneDecimalValues(){
         PricingCategory pricingCategory = new PricingCategory(1L,3D,5,2.5D);
         String expectedAditionalCostString = "and $2.5 afterwards";
-        assertEquals(expectedAditionalCostString,pricingCategory.getAditionalCostString());
+        assertEquals(expectedAditionalCostString,pricingCategory.getAdditionalCostString());
     }
 
     @Test
-    public void testGetAditionalCostStringWithAditionalCostHasTwoDecimalValues(){
+    public void testGetAdditionalCostStringWithAdditionalCostHasTwoDecimalValues(){
         PricingCategory pricingCategory = new PricingCategory(1L,3D,5,1.75D);
         String expectedAditionalCostString = "and $1.75 afterwards";
-        assertEquals(expectedAditionalCostString,pricingCategory.getAditionalCostString());
+        assertEquals(expectedAditionalCostString,pricingCategory.getAdditionalCostString());
     }
 }

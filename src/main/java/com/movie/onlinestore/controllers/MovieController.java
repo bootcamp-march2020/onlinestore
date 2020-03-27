@@ -1,9 +1,13 @@
 package com.movie.onlinestore.controllers;
 
+import com.movie.onlinestore.UrlConstants;
 import com.movie.onlinestore.model.Movie;
 import com.movie.onlinestore.model.MovieInventory;
+import com.movie.onlinestore.model.Response;
 import com.movie.onlinestore.repository.MovieInventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,14 +23,13 @@ public class MovieController {
     @Autowired
     MovieInventoryRepository movieInventoryRepository;
 
-    @GetMapping("/api/movies")
+    @GetMapping(UrlConstants.URL_PATH_MOVIE_LIST)
     @ResponseBody
-    public List<Movie> movielist() {
-
+    public ResponseEntity<Response<List<Movie>>> movielist() {
         List<MovieInventory> movieInventories = movieInventoryRepository.findAll(hasStock());
         List<Movie> movies = movieInventories.stream()
                 .map(e->e.getMovie())
                 .collect(Collectors.toList());
-        return movies;
+        return new ResponseEntity<>(Response.success(movies), HttpStatus.ACCEPTED);
     }
 }

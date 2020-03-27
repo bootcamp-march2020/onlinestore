@@ -57,28 +57,26 @@ public class PricingCategory {
         this.name = name;
     }
 
-    public Double getInitalCost() {
-        return initalCost;
-    }
-
     public void setInitalCost(Double initalCost) {
         this.initalCost = initalCost;
-    }
-
-    public Integer getCutoffDays() {
-        return cutoffDays;
     }
 
     public void setCutoffDays(Integer cutoffDays) {
         this.cutoffDays = cutoffDays;
     }
 
-    public Double getAdditionalCost() {
-        return additionalCost;
-    }
-
     public void setAdditionalCost(Double additionalCost) {
         this.additionalCost = additionalCost;
+    }
+
+    public String getInitialCostString() {
+        DecimalFormat format = new DecimalFormat("0.###");
+        return String.format("$%s for %d days",format.format(this.initalCost),this.cutoffDays);
+    }
+
+    public String getAdditionalCostString() {
+        DecimalFormat format = new DecimalFormat("0.###");
+        return String.format("and $%s afterwards",format.format(this.additionalCost));
     }
 
     public Double calculateCost(Integer numberOfDays){
@@ -88,15 +86,5 @@ public class PricingCategory {
             cost += (remainingDays * this.additionalCost);
         }
         return cost;
-    }
-
-    public String getInitialCostString() {
-        DecimalFormat format = new DecimalFormat("0.###");
-        return String.format("$%s for %d days",format.format(this.initalCost),this.cutoffDays);
-    }
-
-    public String getAditionalCostString() {
-        DecimalFormat format = new DecimalFormat("0.###");
-        return String.format("and $%s afterwards",format.format(this.additionalCost));
     }
 }

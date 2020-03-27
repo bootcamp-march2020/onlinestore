@@ -5,11 +5,13 @@ import com.movie.onlinestore.controllers.CartController;
 import com.movie.onlinestore.model.Cart;
 import com.movie.onlinestore.model.Movie;
 import com.movie.onlinestore.model.PricingCategory;
+import com.movie.onlinestore.model.Response;
 import com.movie.onlinestore.repository.MovieRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
@@ -41,8 +43,8 @@ public class CartControllerTest {
         when(movieRepository.findById(1L)).thenReturn(Optional.of(movie1));
         when(movieRepository.findById(2L)).thenReturn(Optional.of(movie2));
 
-        Cart cart = cartController.checkoutMovies(payload);
-
+        ResponseEntity<Response<Cart>> responseEntity = cartController.checkoutMovies(payload);
+        Cart cart = responseEntity.getBody().getPayload();
         int expectedCartSize = 2;
         Double expectedTotalCost = 19D;
 

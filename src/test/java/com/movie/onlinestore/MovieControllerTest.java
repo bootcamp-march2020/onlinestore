@@ -3,6 +3,7 @@ package com.movie.onlinestore;
 import com.movie.onlinestore.controllers.MovieController;
 import com.movie.onlinestore.model.Movie;
 import com.movie.onlinestore.model.MovieInventory;
+import com.movie.onlinestore.model.Response;
 import com.movie.onlinestore.repository.MovieInventoryRepository;
 import com.movie.onlinestore.repository.MovieRepository;
 
@@ -12,6 +13,7 @@ import org.junit.runner.notification.RunListener;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
 
 import java.text.ParseException;
@@ -50,7 +52,8 @@ public class MovieControllerTest {
 
         when(movieInventoryRepository.findAll(hasStock())).thenReturn(movieInventoryList);
 
-        List<Movie> expectedMovie = movieController.movielist();
+        ResponseEntity<Response<List<Movie>>> responseEntity = movieController.movielist();
+        List<Movie> expectedMovie = responseEntity.getBody().getPayload();
 
         assertEquals(movieList.size(), expectedMovie.size());
         assertEquals(movieList.get(0), expectedMovie.get(0));

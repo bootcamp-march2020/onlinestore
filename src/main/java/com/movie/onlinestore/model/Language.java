@@ -10,7 +10,7 @@ import javax.persistence.*;
 @EqualsAndHashCode
 @Getter
 @Setter
-@Table(name = "language")
+@Table(name = "languages")
 public class Language {
 
     @Id

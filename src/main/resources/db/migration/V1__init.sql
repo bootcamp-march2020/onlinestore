@@ -52,16 +52,16 @@ CREATE TABLE public.imported_file (
 );
 
 
--- public."language" definition
+-- public.languages definition
 
 -- Drop table
 
--- DROP TABLE public."language";
+-- DROP TABLE public.languages;
 
-CREATE TABLE public."language" (
+CREATE TABLE public.languages (
 	id bigserial NOT NULL,
 	"name" varchar(255) NULL,
-	CONSTRAINT language_pkey PRIMARY KEY (id)
+	CONSTRAINT languages_pkey PRIMARY KEY (id)
 );
 
 
@@ -188,6 +188,6 @@ CREATE TABLE public.movie_languages (
 	movie_id int8 NOT NULL,
 	language_id int8 NOT NULL,
 	CONSTRAINT movie_languages_pkey PRIMARY KEY (movie_id, language_id),
-	CONSTRAINT fkj1f9ffhscgc73nmrjlr4ueqjj FOREIGN KEY (language_id) REFERENCES language(id),
-	CONSTRAINT fkl9pko34urm8ncqqeabmnad8x FOREIGN KEY (movie_id) REFERENCES movie(mid)
+	CONSTRAINT fkl9pko34urm8ncqqeabmnad8x FOREIGN KEY (movie_id) REFERENCES movie(mid),
+	CONSTRAINT fkn9wn0gt0dthk59mt3in6o14fq FOREIGN KEY (language_id) REFERENCES languages(id)
 );

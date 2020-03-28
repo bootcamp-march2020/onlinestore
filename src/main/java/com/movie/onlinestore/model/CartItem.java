@@ -31,4 +31,16 @@ public class CartItem {
     public Integer getNumberOfDays() {
         return numberOfDays;
     }
+
+    public String getPriceCategoryName() {
+        return movie.getPricingCategory().getName();
+    }
+
+    public String getInitialCostString () {
+        return movie.getPricingCategory().getInitialCostString();
+    }
+
+    public String getAdditionalCostString() {
+        return movie.getPricingCategory().getAdditionalCostString();
+    }
 }

@@ -5,6 +5,7 @@ import com.movie.onlinestore.model.Movie;
 import com.movie.onlinestore.model.MovieInventory;
 import com.movie.onlinestore.model.Response;
 import com.movie.onlinestore.repository.MovieInventoryRepository;
+import com.movie.onlinestore.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,8 @@ import static com.movie.onlinestore.repository.MovieInventorySpecifications.hasS
 public class MovieController {
     @Autowired
     MovieInventoryRepository movieInventoryRepository;
+    @Autowired
+    MovieService movieService;
 
     @GetMapping(UrlConstants.URL_PATH_MOVIE_LIST)
     @ResponseBody
@@ -31,5 +35,13 @@ public class MovieController {
                 .map(e->e.getMovie())
                 .collect(Collectors.toList());
         return new ResponseEntity<>(Response.success(movies), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping(UrlConstants.URL_PATH_IMPORT_DATA)
+    @ResponseBody
+    public ResponseEntity<Response<String>> importData() throws IOException {
+        String nextFilename =  movieService.nextFileName();
+        String status = movieService.importFile(nextFilename);
+        return new ResponseEntity<>(Response.success(status), HttpStatus.ACCEPTED);
     }
 }

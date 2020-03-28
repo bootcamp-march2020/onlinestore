@@ -10,6 +10,8 @@ public class UrlConstants {
 
     public static final String URL_PATH_CART_CHECKOUT = "/api/checkout";
 
+    public static final String URL_PATH_IMPORT_DATA = "/public/api/import";
+
     private UrlConstants(){
         //Utils class object creation forbidden.
     }

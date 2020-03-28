@@ -1,0 +1,17 @@
+create table actor (id  bigserial not null, name varchar(255), primary key (id));
+create table director (id  bigserial not null, name varchar(255), primary key (id));
+create table genre (id  bigserial not null, name varchar(255), primary key (id));
+create table language (id  bigserial not null, name varchar(255), primary key (id));
+create table movie_actors (movie_id int8 not null, actor_id int8 not null, primary key (movie_id, actor_id));
+create table movie_directors (movie_id int8 not null, director_id int8 not null, primary key (movie_id, director_id));
+create table movie_genres (movie_id int8 not null, genre_id int8 not null, primary key (movie_id, genre_id));
+create table movie_languages (movie_id int8 not null, language_id int8 not null, primary key (movie_id, language_id));
+alter table movie_actors add constraint FKcify69o6k32mj8hoya3skqghv foreign key (actor_id) references actor;
+alter table movie_actors add constraint FKbsto8yef4btokhveihmkg8876 foreign key (movie_id) references movie;
+alter table movie_directors add constraint FKlq7fbgdea8tjb0nuoj0h90ohu foreign key (director_id) references director;
+alter table movie_directors add constraint FKtoqb71lhitfu7eyqnf2oxctyv foreign key (movie_id) references movie;
+alter table movie_genres add constraint FKnup1hm4tk18om6dgawfgo5ay9 foreign key (genre_id) references genre;
+alter table movie_genres add constraint FKs2xl3sirbon75mjcongwhrbi3 foreign key (movie_id) references movie;
+alter table movie_languages add constraint FKj1f9ffhscgc73nmrjlr4ueqjj foreign key (language_id) references language;
+alter table movie_languages add constraint FKl9pko34urm8ncqqeabmnad8x foreign key (movie_id) references movie;
+create table imported_file (id  bigserial not null, file_name varchar(255), imported_time timestamp, status_message varchar(255), primary key (id));

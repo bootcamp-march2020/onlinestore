@@ -33,7 +33,7 @@ public class PricingCategory {
     public PricingCategory() {
     }
 
-    public PricingCategory(Long id,Double initalCost,Integer cutoffDays,Double additionalCost) {
+    public PricingCategory(Long id, String name, Double initalCost, Integer cutoffDays, Double additionalCost) {
         this.id = id;
         this.name = name;
         this.initalCost = initalCost;
@@ -87,4 +87,5 @@ public class PricingCategory {
         }
         return cost;
     }
+
 }

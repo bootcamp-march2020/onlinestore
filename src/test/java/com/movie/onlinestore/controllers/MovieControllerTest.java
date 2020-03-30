@@ -1,5 +1,6 @@
 package com.movie.onlinestore.controllers;
 
+import com.movie.onlinestore.MovieBuilder;
 import com.movie.onlinestore.controllers.MovieController;
 import com.movie.onlinestore.model.Movie;
 import com.movie.onlinestore.model.MovieInventory;
@@ -36,15 +37,15 @@ public class MovieControllerTest {
     MovieImportService movieImportService;
 
     @Test
-    public void testMovielistPositive() throws ParseException {
+    public void testReturnListOfAvailableMovies() {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Movie movie1 = new Movie(1l,"Iron Man","After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.","PG-13",2008,"https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",sdf.parse("2008-05-02"),7.9,"Movie",null);
 
+        Movie movie1 = new MovieBuilder().setMid(1L).build();
         List<MovieInventory> movieInventoryList = new ArrayList<>();
         movieInventoryList.add(new MovieInventory(1L,movie1,2,2));
 
-        Movie movie2 = new Movie(2l,"Super Man","After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.","PG-13",2008,"https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",sdf.parse("2008-05-02"),7.9,"Movie",null);
+        Movie movie2 = new MovieBuilder().setMid(2L).build();
         movieInventoryList.add(new MovieInventory(2L,movie2,2,2));
 
         List<Movie> movieList = new ArrayList<>();
@@ -60,5 +61,4 @@ public class MovieControllerTest {
         assertEquals(movieList.get(0), expectedMovie.get(0));
         assertEquals(movieList.get(1), expectedMovie.get(1));
     }
-
 }

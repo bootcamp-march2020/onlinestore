@@ -1,5 +1,6 @@
 package com.movie.onlinestore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.text.DecimalFormat;
 public class PricingCategory {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
@@ -71,21 +72,36 @@ public class PricingCategory {
 
     public String getInitialCostString() {
         DecimalFormat format = new DecimalFormat("0.###");
-        return String.format("$%s for %d days",format.format(this.initalCost),this.cutoffDays);
+        return String.format("$%s for %d days", format.format(this.initalCost), this.cutoffDays);
     }
 
     public String getAdditionalCostString() {
         DecimalFormat format = new DecimalFormat("0.###");
-        return String.format("and $%s afterwards",format.format(this.additionalCost));
+        return String.format("and $%s afterwards", format.format(this.additionalCost));
     }
 
-    public Double calculateCost(Integer numberOfDays){
+    public Double calculateCost(Integer numberOfDays) {
         Double cost = this.initalCost;
-        if(numberOfDays > this.cutoffDays){
+        if (numberOfDays > this.cutoffDays) {
             Integer remainingDays = numberOfDays - this.cutoffDays;
             cost += (remainingDays * this.additionalCost);
         }
         return cost;
+    }
+
+    @JsonIgnore
+    public Double getAdditionalCost() {
+        return additionalCost;
+    }
+
+    @JsonIgnore
+    public Integer getCutoffDays() {
+        return cutoffDays;
+    }
+
+    @JsonIgnore
+    public Double getInitalCost() {
+        return initalCost;
     }
 
 }

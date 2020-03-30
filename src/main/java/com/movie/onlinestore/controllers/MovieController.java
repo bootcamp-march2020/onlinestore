@@ -34,7 +34,7 @@ public class MovieController {
         List<Movie> movies = movieInventories.stream()
                 .map(e->e.getMovie())
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(Response.success(movies), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(Response.success(movies), HttpStatus.OK);
     }
 
     @GetMapping(UrlConstants.URL_PATH_IMPORT_DATA)

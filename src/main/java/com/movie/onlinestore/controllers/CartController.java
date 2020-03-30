@@ -30,6 +30,6 @@ public class CartController {
             Integer numberOfDays = (Integer) object.get("numberOfDays");
             movieRecord.ifPresent(movie -> cart.addMovieToCart(movie, numberOfDays));
         }
-        return new ResponseEntity<>(Response.success(cart), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(Response.success(cart), HttpStatus.OK);
     }
 }

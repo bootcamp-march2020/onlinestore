@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 @Component
-public class GoogleSignInHelper implements ISignInVerifier {
+public class GoogleAuthenticator implements ISignInAuthenticator {
 
     //should move this to some config file
     private static final String CLIENT_ID = "936772320028-u2gh12om9ng67voal1mck32bgvobkcu7.apps.googleusercontent.com";
@@ -25,7 +25,7 @@ public class GoogleSignInHelper implements ISignInVerifier {
 
     private GoogleIdTokenVerifier mGoogleTokenVerifier;
 
-    public GoogleSignInHelper() {
+    public GoogleAuthenticator() {
 
         mGoogleTokenVerifier =
                 new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())

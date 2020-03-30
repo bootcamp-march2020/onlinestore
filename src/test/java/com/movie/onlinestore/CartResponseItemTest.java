@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import static org.junit.Assert.*;
 
 
-public class CartItemTest {
+public class CartResponseItemTest {
 
     @Test
     public void testCartItemCostCalculation() throws ParseException {

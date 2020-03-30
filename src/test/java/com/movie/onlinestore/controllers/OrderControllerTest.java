@@ -32,11 +32,12 @@ class OrderControllerTest {
 
         PlaceOrderRequest placeOrderRequest = new PlaceOrderRequest();
         placeOrderRequest.setCartItemList(new ArrayList<>());
+        String userId = "1234";
 
         Mockito.when(orderService.isAddressValid(placeOrderRequest)).thenCallRealMethod();
 
         ResponseEntity responseResponseEntity =
-                orderController.placeOrder(placeOrderRequest);
+                orderController.placeOrder(placeOrderRequest, userId);
 
         Response<String> response = (Response<String>) responseResponseEntity.getBody();
         assertNotNull(response);
@@ -47,12 +48,13 @@ class OrderControllerTest {
     @Test
     public void givenZeroCartItemsShouldReturnHTTPError422(){
         PlaceOrderRequest placeOrderRequest = new PlaceOrderRequestBuilder().setAddress("Valid address").build();
+        String userId = "1234";
 
         Mockito.when(orderService.isAddressValid(placeOrderRequest)).thenCallRealMethod();
         Mockito.when(orderService.isCartListValid(placeOrderRequest)).thenCallRealMethod();
 
         ResponseEntity<Response<String>> responseResponseEntity =
-                orderController.placeOrder(placeOrderRequest);
+                orderController.placeOrder(placeOrderRequest, userId);
 
         Response<String> response = responseResponseEntity.getBody();
         assertNotNull(response);

@@ -20,7 +20,7 @@ public class Order {
     private Long oid;
 
     @Column(name = "customer_id")
-    private Long customerId;
+    private String customerId;
 
     @Column(name = "address")
     private String address;
@@ -38,7 +38,7 @@ public class Order {
     public Order() {
     }
 
-    public Order (  Long customerId, String address, Date orderDate) {
+    public Order (  String customerId, String address, Date orderDate) {
         this.customerId = customerId;
         this.address = address;
         this.orderDate = orderDate;
@@ -52,11 +52,11 @@ public class Order {
         this.oid = oid;
     }
 
-    public Long getCustomerId() {
+    public String  getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Long customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 

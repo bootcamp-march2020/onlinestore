@@ -49,9 +49,9 @@ public class OrderService {
         return outOfStockMovies;
     }
 
-    public void placeOrder(PlaceOrderRequest placeOrderRequest){
+    public void placeOrder(PlaceOrderRequest placeOrderRequest, String customerId){
 
-        Order order = createOrder(placeOrderRequest.getAddress());
+        Order order = createOrder(placeOrderRequest.getAddress(), customerId);
 
         List<OrderItem> orderItems = new ArrayList<>();
         Double totalCost = 0D;
@@ -83,8 +83,8 @@ public class OrderService {
         movieInventoryRepository.updateMovieInventory(movieIds);
     }
 
-    private Order createOrder(String address) {
-        return orderRepository.save(new Order(1L, address, new Date()));
+    private Order createOrder(String address, String customerId) {
+        return orderRepository.save(new Order(customerId, address, new Date()));
     }
 
     private OrderItem createItem(Long orderId, Movie movie, int numOfDays, Double cost) {

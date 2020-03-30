@@ -41,7 +41,6 @@ public class MovieController {
     @ResponseBody
     public ResponseEntity<Response<String>> importData() throws IOException {
         String nextFilename =  movieImportService.nextFileName();
-        nextFilename = "Sample1.csv";
         String status = movieImportService.importFile(nextFilename);
         return new ResponseEntity<>(Response.success(status), HttpStatus.ACCEPTED);
     }

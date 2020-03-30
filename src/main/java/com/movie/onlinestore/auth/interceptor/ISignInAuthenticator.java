@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.constraints.Null;
 
-public interface ISignInVerifier {
+public interface ISignInAuthenticator {
 
     boolean isValidToken(@Null String idToken);
 

@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
-    private ISignInVerifier iSignInHelper;
+    private ISignInAuthenticator iSignInHelper;
 
-    public LoginInterceptor(ISignInVerifier iSignInHelper) {
+    public LoginInterceptor(ISignInAuthenticator iSignInHelper) {
         this.iSignInHelper = iSignInHelper;
     }
 

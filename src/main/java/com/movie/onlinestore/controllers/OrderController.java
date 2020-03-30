@@ -2,11 +2,9 @@ package com.movie.onlinestore.controllers;
 
 
 import com.movie.onlinestore.UrlConstants;
-import com.movie.onlinestore.model.*;
-import com.movie.onlinestore.repository.MovieInventoryRepository;
-import com.movie.onlinestore.repository.MovieRepository;
-import com.movie.onlinestore.repository.OrderItemRepository;
-import com.movie.onlinestore.repository.OrderRepository;
+import com.movie.onlinestore.model.PlaceOrderRequest;
+import com.movie.onlinestore.model.Response;
+import com.movie.onlinestore.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,82 +13,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
 public class OrderController {
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Autowired
-    private MovieRepository movieRepository;
-
-    @Autowired
-    private OrderItemRepository orderItemRepository;
-
-    @Autowired
-    private MovieInventoryRepository movieInventoryRepository;
-
+    private OrderService orderService;
 
     @PostMapping(UrlConstants.URL_PATH_PLACE_ORDER)
     @ResponseBody
-    public ResponseEntity<Response<String>> placeOrder(@RequestBody PlaceOrderRequest placeOrderRequest) {
-        System.out.println(placeOrderRequest.getAddress());
+    public ResponseEntity placeOrder(@RequestBody PlaceOrderRequest placeOrderRequest) {
 
-        Order order = createOrder(placeOrderRequest.getAddress());
-        StringBuilder missedMovies = new StringBuilder();
+        if (!orderService.isAddressValid(placeOrderRequest))
+            return new ResponseEntity(new Response<String>(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                    "Invalid address provided", ""), HttpStatus.OK);
 
-        List<OrderItem> orderItems = new ArrayList<>();
-        Double totalCost = 0D;
+        if (!orderService.isCartListValid(placeOrderRequest))
+            return new ResponseEntity(new Response<String>(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                    "Cart is empty", ""), HttpStatus.OK);
 
-        for (PlaceOrderRequest.CartItem cartItem : placeOrderRequest.getCartItemList()) {
-            Movie movie = movieRepository.findByIdIfHasStock(cartItem.getMovieId());
-            if (null == movie)
-                missedMovies.append(cartItem.getMovieName());
+        List<Long> outOfStockMoviesIds = orderService.checkForMissingCartItems(placeOrderRequest);
+        if (outOfStockMoviesIds.size() > 0) {
+            return new ResponseEntity(new Response<OutOfStockResponse>(HttpStatus.ACCEPTED.value(),
+                    "Some movies out of stock", new OutOfStockResponse(outOfStockMoviesIds)), HttpStatus.OK);
         }
 
-        if (!missedMovies.toString().isEmpty())
-            return new ResponseEntity<Response<String>>(new Response<String>(HttpStatus.OK.value(),
-                    "Some movies out of stock", missedMovies.toString()), HttpStatus.OK);
-
-        Set<Long> movieIds = new HashSet<>();
-
-        for (PlaceOrderRequest.CartItem cartItem : placeOrderRequest.getCartItemList()) {
-            Optional<Movie> movieRecord = movieRepository.findById(cartItem.getMovieId());
-
-            Integer numOfDays = cartItem.getNumberOfDays();
-
-            Movie movie = movieRecord.get();
-
-            Double costOfMovie = movie.calculateCost(numOfDays);
-            OrderItem orderItem = createItem(order.getOid(), movie, numOfDays, costOfMovie);
-            orderItems.add(orderItem);
-
-            totalCost += costOfMovie;
-
-            movieIds.add(movie.getMid());
-        }
-
-        //Success
-        order.setOrderItems(orderItems);
-        order.setTotalCost(totalCost);
-
-        orderRepository.save(order);
-
-
-        movieInventoryRepository.updateMovieInventory(movieIds);
+        orderService.placeOrder(placeOrderRequest);
 
         return new ResponseEntity<>(Response.success("Success"), HttpStatus.OK);
     }
 
-    private Order createOrder(String address) {
-        return orderRepository.save(new Order(1L, address, new Date()));
-    }
+    private static class OutOfStockResponse {
+        private List<Long> outOfStockMovieIds;
 
-    private OrderItem createItem(Long orderId, Movie movie, int numOfDays, Double cost) {
-        return orderItemRepository.save(new OrderItem(orderId,
-                movie, numOfDays, movie.getPricingCategory().getInitalCost(),
-                movie.getPricingCategory().getAdditionalCost(),
-                movie.getPricingCategory().getCutoffDays(), cost));
+        OutOfStockResponse(List<Long> outOfStockMovieIds) {
+            this.outOfStockMovieIds = outOfStockMovieIds;
+        }
+
+        public List<Long> getOutOfStockMovieIds() {
+            return outOfStockMovieIds;
+        }
     }
 }

@@ -53,7 +53,7 @@ public class LoginInterceptorTest {
         //Arrange
 
         final String VALID_ID_TOKEN = "valid_token";
-        ISignInVerifier mockGoogleSignInVerifier = Mockito.mock(ISignInVerifier.class);
+        ISignInAuthenticator mockGoogleSignInVerifier = Mockito.mock(ISignInAuthenticator.class);
 
         LoginInterceptor loginInterceptor = new LoginInterceptor(mockGoogleSignInVerifier);
 

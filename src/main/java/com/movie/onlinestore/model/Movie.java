@@ -5,12 +5,11 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
 @Table(name = "movie")
 public class Movie {
 
@@ -46,10 +45,42 @@ public class Movie {
     @JoinColumn(name = "pricing_category_id")
     private PricingCategory pricingCategory;
 
+    @ManyToMany
+    @JoinTable(
+            name = "movie_actors",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id"))
+    Set<Actor> actorSet;
+
+    @ManyToMany
+    @JoinTable(
+            name = "movie_directors",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "director_id"))
+    Set<Director> directorSet;
+
+    @ManyToMany
+    @JoinTable(
+            name = "movie_languages",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "language_id"))
+    Set<Language> languageSet;
+
+    @ManyToMany
+    @JoinTable(
+            name = "movie_genres",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    Set<Genre> genreSet;
+
     public Movie() {
+        this.actorSet = new HashSet<>();
+        this.directorSet = new HashSet<>();
+        this.languageSet = new HashSet<>();
+        this.genreSet = new HashSet<>();
     }
 
-    public Movie(Long mid, String title, String description, String rated, Integer year, String posterUrlString, Date releaseDate, Double ratings, String type, PricingCategory pricingCategory) {
+    public Movie(Long mid, String title, String description, String rated, Integer year, String posterUrlString, Date releaseDate, Double ratings, String type, PricingCategory pricingCategory){
         this.mid = mid;
         this.title = title;
         this.description = description;
@@ -60,6 +91,10 @@ public class Movie {
         this.ratings = ratings;
         this.type = type;
         this.pricingCategory = pricingCategory;
+        this.actorSet = new HashSet<>();
+        this.directorSet = new HashSet<>();
+        this.languageSet = new HashSet<>();
+        this.genreSet = new HashSet<>();
     }
 
     public Long getMid() {
@@ -142,7 +177,81 @@ public class Movie {
         this.pricingCategory = pricingCategory;
     }
 
+    public Set<Actor> getActorSet() {
+        return actorSet;
+    }
+
+    public void setActorSet(Set<Actor> actorSet) {
+        this.actorSet = actorSet;
+    }
+
+    public Set<Director> getDirectorSet() {
+        return directorSet;
+    }
+
+    public void setDirectorSet(Set<Director> directorSet) {
+        this.directorSet = directorSet;
+    }
+
+    public Set<Language> getLanguageSet() {
+        return languageSet;
+    }
+
+    public void setLanguageSet(Set<Language> languageSet) {
+        this.languageSet = languageSet;
+    }
+
+    public Set<Genre> getGenreSet() {
+        return genreSet;
+    }
+
+    public void setGenreSet(Set<Genre> genreSet) {
+        this.genreSet = genreSet;
+    }
+
     public Double calculateCost(Integer numberOfDays){
         return this.pricingCategory.calculateCost(numberOfDays);
+    }
+
+    public void addToActorSet(Actor actor) {
+        this.actorSet.add(actor);
+    }
+
+    public void addToDirectorSet(Director director) {
+        this.directorSet.add(director);
+    }
+
+    public void addToLanguageSet(Language language) {
+        this.languageSet.add(language);
+    }
+
+    public void addToGenreSet(Genre genre) {
+        this.genreSet.add(genre);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Movie movie = (Movie) o;
+        return Objects.equals(mid, movie.mid) &&
+                Objects.equals(title, movie.title) &&
+                Objects.equals(description, movie.description) &&
+                Objects.equals(rated, movie.rated) &&
+                Objects.equals(year, movie.year) &&
+                Objects.equals(posterUrlString, movie.posterUrlString) &&
+                Objects.equals(releaseDate, movie.releaseDate) &&
+                Objects.equals(ratings, movie.ratings) &&
+                Objects.equals(type, movie.type) &&
+                Objects.equals(pricingCategory, movie.pricingCategory) &&
+                Objects.equals(actorSet, movie.actorSet) &&
+                Objects.equals(directorSet, movie.directorSet) &&
+                Objects.equals(languageSet, movie.languageSet) &&
+                Objects.equals(genreSet, movie.genreSet);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mid, title, description, rated, year, posterUrlString, releaseDate, ratings, type, pricingCategory, actorSet, directorSet, languageSet, genreSet);
     }
 }

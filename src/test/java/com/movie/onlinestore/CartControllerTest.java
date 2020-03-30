@@ -37,8 +37,8 @@ public class CartControllerTest {
         item2.put("numberOfDays", 5);
         payload[1] = item2;
 
-        Movie movie1 = new Movie(1l,"Iron Man","After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.","PG-13",2008,"https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",new Date(),7.9,"Movie",new PricingCategory(1L,3D,5,1D));
-        Movie movie2 = new Movie(2l,"Super Man","After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.","PG-13",2008,"https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",new Date(),7.9,"Movie",new PricingCategory(2L,5D,2,2D));
+        Movie movie1 = new Movie(1l,"Iron Man","After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.","PG-13",2008,"https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",new Date(),7.9,"Movie",new PricingCategory(1L,"Default",3D,5,1D));
+        Movie movie2 = new Movie(2l,"Super Man","After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.","PG-13",2008,"https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",new Date(),7.9,"Movie",new PricingCategory(2L,"New",5D,2,2D));
 
         when(movieRepository.findById(1L)).thenReturn(Optional.of(movie1));
         when(movieRepository.findById(2L)).thenReturn(Optional.of(movie2));

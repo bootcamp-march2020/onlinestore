@@ -12,6 +12,8 @@ public class UrlConstants {
 
     public static final String URL_PATH_PLACE_ORDER = "/api/placeorder";
 
+    public static final String URL_PATH_IMPORT_DATA = "/public/api/import";
+
     private UrlConstants(){
         //Utils class object creation forbidden.
     }

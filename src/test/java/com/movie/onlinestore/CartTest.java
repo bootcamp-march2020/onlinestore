@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 
 import static org.junit.Assert.*;
 
-public class CartResponseTest {
+public class CartTest {
 
     @Test
     public void testAddMovieToCartShould() throws ParseException {

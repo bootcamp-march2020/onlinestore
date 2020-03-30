@@ -4,6 +4,7 @@ package com.movie.onlinestore.controllers;
 import com.movie.onlinestore.UrlConstants;
 import com.movie.onlinestore.model.PlaceOrderRequest;
 import com.movie.onlinestore.model.Response;
+import com.movie.onlinestore.model.response.OutOfStockResponse;
 import com.movie.onlinestore.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,17 +40,5 @@ public class OrderController {
         orderService.placeOrder(placeOrderRequest, userId);
 
         return new ResponseEntity<>(Response.success("Success"), HttpStatus.OK);
-    }
-
-    private static class OutOfStockResponse {
-        private List<Long> outOfStockMovieIds;
-
-        OutOfStockResponse(List<Long> outOfStockMovieIds) {
-            this.outOfStockMovieIds = outOfStockMovieIds;
-        }
-
-        public List<Long> getOutOfStockMovieIds() {
-            return outOfStockMovieIds;
-        }
     }
 }

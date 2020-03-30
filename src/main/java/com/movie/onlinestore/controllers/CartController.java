@@ -1,7 +1,8 @@
 package com.movie.onlinestore.controllers;
 
 import com.movie.onlinestore.UrlConstants;
-import com.movie.onlinestore.model.Cart;
+import com.movie.onlinestore.model.response.CartResponse;
+import com.movie.onlinestore.model.CheckoutRequest;
 import com.movie.onlinestore.model.Movie;
 import com.movie.onlinestore.model.Response;
 import com.movie.onlinestore.repository.MovieRepository;
@@ -13,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
 
 
 @RestController
@@ -22,14 +22,18 @@ public class CartController {
     @Autowired
     MovieRepository movieRepository;
 
-    @RequestMapping( value = UrlConstants.URL_PATH_CART_CHECKOUT, method = RequestMethod.POST)
-    public ResponseEntity<Response<Cart>> checkoutMovies(@RequestBody Map<String, Object>[] payload) {
-        Cart cart = new Cart();
-        for(Map<String,Object> object : payload){
-            Optional<Movie> movieRecord = movieRepository.findById(new Long((Integer) object.get("movieId")));
-            Integer numberOfDays = (Integer) object.get("numberOfDays");
-            movieRecord.ifPresent(movie -> cart.addMovieToCart(movie, numberOfDays));
+    @RequestMapping(value = UrlConstants.URL_PATH_CART_CHECKOUT, method = RequestMethod.POST)
+    public ResponseEntity<Response<CartResponse>> checkoutMovies(@RequestBody List<CheckoutRequest> checkoutRequests) {
+
+        CartResponse cartResponse = new CartResponse();
+
+        for (CheckoutRequest request : checkoutRequests) {
+            Movie movieRecord = movieRepository.findByIdIfHasStock(request.getMovieId());
+            if (null == movieRecord)
+                cartResponse.addOutOfStockMovies(request.getMovieId());
+            else
+                cartResponse.addMovieToCart(movieRecord, request.getNumberOfDays());
         }
-        return new ResponseEntity<>(Response.success(cart), HttpStatus.OK);
+        return new ResponseEntity<>(Response.success(cartResponse), HttpStatus.OK);
     }
 }

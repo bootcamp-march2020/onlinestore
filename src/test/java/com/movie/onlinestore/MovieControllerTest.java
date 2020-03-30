@@ -6,11 +6,10 @@ import com.movie.onlinestore.model.MovieInventory;
 import com.movie.onlinestore.model.Response;
 import com.movie.onlinestore.repository.MovieInventoryRepository;
 
-import com.movie.onlinestore.service.MovieService;
+import com.movie.onlinestore.service.MovieImportService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
@@ -34,7 +33,7 @@ public class MovieControllerTest {
     @Mock
     MovieInventoryRepository movieInventoryRepository;
     @Mock
-    MovieService movieService;
+    MovieImportService movieImportService;
 
     @Test
     public void testMovielistPositive() throws ParseException {

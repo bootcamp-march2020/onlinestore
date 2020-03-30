@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ActorRepository extends JpaRepository<Actor, Long> {
+public interface ActorRepository extends JpaRepository<Actor, Long>, ActorRepositoryCustom {
 
     @Query("SELECT actor FROM Actor actor WHERE actor.name = ?1")
     Optional<Actor> findByName(String name);

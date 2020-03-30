@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface LanguageRepository extends JpaRepository<Language, Long> {
+public interface LanguageRepository extends JpaRepository<Language, Long>, LanguageRepositoryCustom {
 
     @Query("SELECT language FROM Language language WHERE language.name = ?1")
     Optional<Language> findByName(String name);

@@ -5,7 +5,7 @@ import com.movie.onlinestore.model.Movie;
 import com.movie.onlinestore.model.MovieInventory;
 import com.movie.onlinestore.model.Response;
 import com.movie.onlinestore.repository.MovieInventoryRepository;
-import com.movie.onlinestore.service.MovieService;
+import com.movie.onlinestore.service.MovieImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class MovieController {
     @Autowired
     MovieInventoryRepository movieInventoryRepository;
     @Autowired
-    MovieService movieService;
+    MovieImportService movieImportService;
 
     @GetMapping(UrlConstants.URL_PATH_MOVIE_LIST)
     @ResponseBody
@@ -40,8 +40,9 @@ public class MovieController {
     @GetMapping(UrlConstants.URL_PATH_IMPORT_DATA)
     @ResponseBody
     public ResponseEntity<Response<String>> importData() throws IOException {
-        String nextFilename =  movieService.nextFileName();
-        String status = movieService.importFile(nextFilename);
+        String nextFilename =  movieImportService.nextFileName();
+        nextFilename = "Sample1.csv";
+        String status = movieImportService.importFile(nextFilename);
         return new ResponseEntity<>(Response.success(status), HttpStatus.ACCEPTED);
     }
 }

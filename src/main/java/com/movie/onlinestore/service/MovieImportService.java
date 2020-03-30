@@ -3,6 +3,8 @@ package com.movie.onlinestore.service;
 import com.movie.onlinestore.model.*;
 import com.movie.onlinestore.repository.*;
 import com.opencsv.CSVReader;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MovieService {
+public class MovieImportService {
 
     @Autowired
     ImportedFileRepository importedFileRepository;
@@ -40,6 +42,10 @@ public class MovieService {
 
     @Value( "${importdata.prefix}" )
     private String urlPrefix;
+    @Value("${omdbapi.apiUrl}")
+    private String apiUrl;
+    @Value("${omdbapi.apiKey}")
+    private String apiKey;
 
     public String nextFileName(){
         Long importCount = importedFileRepository.count();
@@ -61,7 +67,7 @@ public class MovieService {
                     lineCounter++;
                      Movie movie = constructMovie(record, lineCounter, errorList);
                     if (movie != null) {
-                        Integer stockCount = Integer.parseInt(record[13]);
+                        Integer stockCount = Integer.parseInt(record[2]);
                         movie = movieRepository.save(movie);
                         MovieInventory movieInventory = new MovieInventory(movie, stockCount);
                         movieInventory = movieInventoryRepository.save(movieInventory);
@@ -90,29 +96,17 @@ public class MovieService {
     public Movie constructMovie(String[] record, Integer lineCounter, List<String> errorList) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
         Movie movie = null;
-        if(record.length == 14){
-            Optional<PricingCategory>  pricingCategoryRecord = pricingCategoryRepository.findByName(record[8]);
+        if(record.length == 3){
+            Optional<PricingCategory>  pricingCategoryRecord = pricingCategoryRepository.findByName(record[1]);
             if(pricingCategoryRecord.isPresent()){
                 try {
-                    String title = record[0];
-                    String description = record[1];
-                    String rated = record[2];
-                    Integer year = Integer.parseInt(record[3]);
-                    String posterUrlString = record[4];
-                    Date releaseDate = sdf.parse(record[5]);
-                    Double ratings = Double.parseDouble(record[6]);
-                    String type = record[7];
-                    movie = new Movie(null, title, description, rated, year, posterUrlString, releaseDate, ratings, type, pricingCategoryRecord.get());
-                    addActorsToMovie(movie, record[9]);
-                    addDirectorsToMovie(movie, record[10]);
-                    addLanguagesToMovie(movie, record[11]);
-                    addGenresToMovie(movie, record[12]);
+                    movie = constructMovieFromApi(record[0],pricingCategoryRecord.get());
                 }
-                catch (ParseException pe){
+                catch (IOException ioe){
                     StringBuilder sb = new StringBuilder();
                     sb.append("Line ");
                     sb.append(lineCounter);
-                    sb.append(" release date is in wrong format");
+                    sb.append(" Unable to get Movie Details From API");
                     errorList.add(sb.toString());
                 }
             }
@@ -134,12 +128,40 @@ public class MovieService {
         return movie;
     }
 
+    public Movie constructMovieFromApi(String movieId, PricingCategory pricingCategory) throws IOException  {
+        Movie movie = null;
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+            URL url = new URL(apiUrl+"?apikey="+apiKey+"&i="+movieId);
+            Object obj = new JSONParser().parse(new InputStreamReader(url.openStream()));
+            JSONObject jo = (JSONObject) obj;
+            String title = jo.get("Title").toString();
+            String description = jo.get("Plot").toString();
+            String rated = jo.get("Rated").toString();
+            Integer year = Integer.parseInt(jo.get("Year").toString());
+            String posterUrlString = jo.get("Poster").toString();
+            Date releaseDate = sdf.parse(jo.get("Released").toString());
+            Double ratings = Double.parseDouble(jo.get("imdbRating").toString());
+            String type = "Movie";
+            movie = new Movie(null, title, description, rated, year, posterUrlString, releaseDate, ratings, type, pricingCategory);
+            addActorsToMovie(movie, jo.get("Actors").toString());
+            addDirectorsToMovie(movie, jo.get("Director").toString());
+            addLanguagesToMovie(movie, jo.get("Language").toString());
+            addGenresToMovie(movie, jo.get("Genre").toString());
+        }
+        catch (org.json.simple.parser.ParseException | ParseException e){
+
+        }
+        return movie;
+    }
+
+
     private void addActorsToMovie(Movie movie, String actorStr){
         String[] actors = actorStr.split(",");
         for(String actor : actors){
             String actorName = actor.trim();
             if(!actorName.equals("")){
-                movie.addToActorSet(findOrCreateActor(actorName));
+                movie.addToActorSet(actorRepository.findOrCreate(actorName));
             }
         }
     }
@@ -149,7 +171,7 @@ public class MovieService {
         for(String director : directors){
             String directorName = director.trim();
             if(!directorName.equals("")){
-                movie.addToDirectorSet(findOrCreateDirector(directorName));
+                movie.addToDirectorSet(directorRepository.findOrCreate(directorName));
             }
         }
     }
@@ -159,7 +181,7 @@ public class MovieService {
         for(String language : languages){
             String languageName = language.trim();
             if(!languageName.equals("")){
-                movie.addToLanguageSet(findOrCreateLanguage(languageName));
+                movie.addToLanguageSet(languageRepository.findOrCreate(languageName));
             }
         }
     }
@@ -169,61 +191,14 @@ public class MovieService {
         for(String genre : genres){
             String genreName = genre.trim();
             if(!genreName.equals("")){
-                movie.addToGenreSet(findOrCreateGenre(genreName));
+                movie.addToGenreSet(genreRepository.findOrCreate(genreName));
             }
         }
     }
 
-    private Actor findOrCreateActor(String name){
-        Actor actor = null;
-        Optional<Actor> actorRecord = actorRepository.findByName(name);
-        if(actorRecord.isPresent()){
-            actor = actorRecord.get();
-        }
-        else{
-            actor = new Actor(null,name);
-            actor = actorRepository.save(actor);
-        }
-        return actor;
-    }
-
-    private Director findOrCreateDirector(String name){
-        Director director = null;
-        Optional<Director> directorRecord = directorRepository.findByName(name);
-        if(directorRecord.isPresent()){
-            director = directorRecord.get();
-        }
-        else{
-            director = new Director(null,name);
-            director = directorRepository.save(director);
-        }
-        return director;
-    }
-
-    private Language findOrCreateLanguage(String name){
-        Language language = null;
-        Optional<Language> languageRecord = languageRepository.findByName(name);
-        if(languageRecord.isPresent()){
-            language = languageRecord.get();
-        }
-        else{
-            language = new Language(null,name);
-            language = languageRepository.save(language);
-        }
-        return language;
-    }
-
-    private Genre findOrCreateGenre(String name){
-        Genre genre = null;
-        Optional<Genre> genreRecord = genreRepository.findByName(name);
-        if(genreRecord.isPresent()){
-            genre = genreRecord.get();
-        }
-        else{
-            genre = new Genre(null,name);
-            genre = genreRepository.save(genre);
-        }
-        return genre;
+    public void setApiDetails(String apiUrl, String apiKey) {
+        this.apiUrl = apiUrl;
+        this.apiKey = apiKey;
     }
 
     public void setImportedFileRepository(ImportedFileRepository importedFileRepository) {

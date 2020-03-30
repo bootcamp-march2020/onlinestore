@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface DirectorRepository extends JpaRepository<Director, Long> {
+public interface DirectorRepository extends JpaRepository<Director, Long>, DirectorRepositoryCustom {
 
     @Query("SELECT director FROM Director director WHERE director.name = ?1")
     Optional<Director> findByName(String name);

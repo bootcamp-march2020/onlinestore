@@ -27,6 +27,10 @@ public class ImportedFile {
     @Column(name = "status_message")
     private String statusMessage;
 
+
+    public ImportedFile() {
+    }
+
     public ImportedFile(String fileName, String statusMessage) {
         this.fileName = fileName;
         this.importedTime = new Date();

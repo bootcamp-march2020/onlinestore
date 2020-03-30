@@ -76,13 +76,8 @@ public class MovieImportService {
                 }
             }
             StringBuilder sb = new StringBuilder();
-            sb.append(lineCounter);
-            sb.append(" records are in the file. ");
-            sb.append(movieInventoryList.size());
-            sb.append(" records inserted successfully. ");
-            sb.append(errorList.size());
-            sb.append(" records has errors. ");
-            sb.append(String.join(" ",errorList));
+            sb.append(lineCounter).append(" records are in the file. ").append(movieInventoryList.size()).append(" records inserted successfully. ")
+                    .append(errorList.size()).append(" records has errors. ").append(String.join(" ",errorList));
             message = sb.toString();
             ImportedFile importedFile = new ImportedFile(fileName,message);
             importedFileRepository.save(importedFile);
@@ -112,17 +107,13 @@ public class MovieImportService {
             }
             else{
                 StringBuilder sb = new StringBuilder();
-                sb.append("Line ");
-                sb.append(lineCounter);
-                sb.append(" has invalid pricing type");
+                sb.append("Line ").append(lineCounter).append(" has invalid pricing type");
                 errorList.add(sb.toString());
             }
         }
         else{
             StringBuilder sb = new StringBuilder();
-            sb.append("Line ");
-            sb.append(lineCounter);
-            sb.append(" has data mismatch");
+            sb.append("Line ").append(lineCounter).append(" has data mismatch");
             errorList.add(sb.toString());
         }
         return movie;

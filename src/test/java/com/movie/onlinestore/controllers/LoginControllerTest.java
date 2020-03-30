@@ -1,5 +1,6 @@
-package com.movie.onlinestore;
+package com.movie.onlinestore.controllers;
 
+import com.movie.onlinestore.UrlConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

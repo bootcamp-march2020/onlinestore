@@ -1,4 +1,4 @@
-package com.movie.onlinestore;
+package com.movie.onlinestore.repository;
 
 import com.movie.onlinestore.model.Language;
 import com.movie.onlinestore.repository.LanguageRepository;

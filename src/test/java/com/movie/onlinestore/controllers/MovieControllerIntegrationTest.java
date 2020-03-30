@@ -1,4 +1,5 @@
-package com.movie.onlinestore;
+package com.movie.onlinestore.controllers;
+import com.movie.onlinestore.OnlinestoreApplication;
 import com.movie.onlinestore.controllers.MovieController;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

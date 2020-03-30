@@ -1,4 +1,4 @@
-package com.movie.onlinestore;
+package com.movie.onlinestore.service;
 
 import com.movie.onlinestore.model.*;
 import com.movie.onlinestore.repository.*;

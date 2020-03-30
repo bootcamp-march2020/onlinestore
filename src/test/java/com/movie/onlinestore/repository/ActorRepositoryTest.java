@@ -1,4 +1,4 @@
-package com.movie.onlinestore;
+package com.movie.onlinestore.repository;
 
 import com.movie.onlinestore.model.Actor;
 import com.movie.onlinestore.repository.ActorRepository;

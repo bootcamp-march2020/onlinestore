@@ -1,4 +1,4 @@
-package com.movie.onlinestore;
+package com.movie.onlinestore.controllers;
 
 import com.movie.onlinestore.controllers.MovieController;
 import com.movie.onlinestore.model.Movie;

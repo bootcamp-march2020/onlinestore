@@ -1,10 +1,10 @@
 package com.movie.onlinestore.controllers;
 
 import com.movie.onlinestore.UrlConstants;
-import com.movie.onlinestore.model.response.CartResponse;
 import com.movie.onlinestore.model.CheckoutRequest;
 import com.movie.onlinestore.model.Movie;
 import com.movie.onlinestore.model.Response;
+import com.movie.onlinestore.model.response.CartResponse;
 import com.movie.onlinestore.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +34,10 @@ public class CartController {
             else
                 cartResponse.addMovieToCart(movieRecord, request.getNumberOfDays());
         }
-        return new ResponseEntity<>(Response.success(cartResponse), HttpStatus.OK);
+        if (cartResponse.getOutOfStockMoviesIds().isEmpty())
+            return new ResponseEntity<>(Response.success(cartResponse), HttpStatus.OK);
+        return new ResponseEntity<>(new Response<>(HttpStatus.ACCEPTED.value(),
+                "Some movies are out of stock",cartResponse), HttpStatus.OK);
+
     }
 }

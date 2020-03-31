@@ -29,6 +29,8 @@ dependencies {
 	compile 'com.google.auth:google-auth-library-oauth2-http:0.20.0'
 	compile 'com.opencsv:opencsv:4.1'
 	compile 'com.googlecode.json-simple:json-simple:1.1.1'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '1.2.0.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.2.6.RELEASE'
 
 }
 

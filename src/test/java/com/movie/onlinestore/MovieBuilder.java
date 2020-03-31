@@ -18,6 +18,11 @@ public class MovieBuilder {
         return this;
     }
 
+    public MovieBuilder setDefaultPrincingCategory(){
+        this.pricingCategory = new PricingCategory(1L,"Default",3D,5,1D);
+        return this;
+    }
+
     public Movie build(){
         Movie movie = new Movie();
         movie.setMid(this.mid);

@@ -4,6 +4,7 @@ package com.movie.onlinestore.controllers;
 import com.movie.onlinestore.UrlConstants;
 import com.movie.onlinestore.model.PlaceOrderRequest;
 import com.movie.onlinestore.model.Response;
+import com.movie.onlinestore.model.User;
 import com.movie.onlinestore.model.response.OutOfStockResponse;
 import com.movie.onlinestore.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class OrderController {
 
     @PostMapping(UrlConstants.URL_PATH_PLACE_ORDER)
     @ResponseBody
-    public ResponseEntity placeOrder(@RequestBody PlaceOrderRequest placeOrderRequest, @RequestAttribute(name = "user_id") String userId) {
+    public ResponseEntity placeOrder(@RequestBody PlaceOrderRequest placeOrderRequest, @RequestAttribute(name = "user") User user) {
 
         if (!orderService.isAddressValid(placeOrderRequest))
             return new ResponseEntity(new Response<String>(HttpStatus.UNPROCESSABLE_ENTITY.value(),
@@ -37,7 +38,7 @@ public class OrderController {
                     "Some movies out of stock", new OutOfStockResponse(outOfStockMoviesIds)), HttpStatus.OK);
         }
 
-        orderService.placeOrder(placeOrderRequest, userId);
+        orderService.placeOrder(placeOrderRequest, user);
 
         return new ResponseEntity<>(Response.success("Success"), HttpStatus.OK);
     }

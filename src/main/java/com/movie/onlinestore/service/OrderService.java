@@ -6,8 +6,6 @@ import com.movie.onlinestore.repository.MovieRepository;
 import com.movie.onlinestore.repository.OrderItemRepository;
 import com.movie.onlinestore.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,6 +25,9 @@ public class OrderService {
     @Autowired
     private MovieInventoryRepository movieInventoryRepository;
 
+    @Autowired
+    private MailService mailService;
+
     public boolean isAddressValid(PlaceOrderRequest placeOrderRequest) {
         String address = placeOrderRequest.getAddress();
         return null != address && !address.isEmpty();
@@ -37,7 +38,7 @@ public class OrderService {
         return null != cartItemList && !cartItemList.isEmpty();
     }
 
-    public List<Long> checkForMissingCartItems(PlaceOrderRequest placeOrderRequest){
+    public List<Long> checkForMissingCartItems(PlaceOrderRequest placeOrderRequest) {
         List<Long> outOfStockMovies = new ArrayList<>();
 
         for (PlaceOrderRequest.CartItem cartItem : placeOrderRequest.getCartItemList()) {
@@ -49,9 +50,9 @@ public class OrderService {
         return outOfStockMovies;
     }
 
-    public void placeOrder(PlaceOrderRequest placeOrderRequest, String customerId){
+    public void placeOrder(PlaceOrderRequest placeOrderRequest, User user) {
 
-        Order order = createOrder(placeOrderRequest.getAddress(), customerId);
+        Order order = createOrder(placeOrderRequest.getAddress(), user.getUserId());
 
         List<OrderItem> orderItems = new ArrayList<>();
         Double totalCost = 0D;
@@ -81,6 +82,8 @@ public class OrderService {
         orderRepository.save(order);
 
         movieInventoryRepository.updateMovieInventory(movieIds);
+
+        mailService.sendInvoice(user, order);
     }
 
     private Order createOrder(String address, String customerId) {

@@ -39,7 +39,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         iSignInHelper.onboardUser(user);
 
-        request.setAttribute("user_id",user.getUserId());
+        request.setAttribute("user",user);
 
         return true;
     }

@@ -59,4 +59,14 @@ public class MovieInventory {
         this.totalCount += stockCount;
         this.availableCount += stockCount;
     }
+
+    public void removeStock(Integer stockCount) throws Exception {
+        if((this.availableCount - stockCount) >= 0) {
+            this.totalCount -= stockCount;
+            this.availableCount -= stockCount;
+        }
+        else{
+            throw new StockUnderflowException("Stock count to be removed is more than available stock count.");
+        }
+    }
 }

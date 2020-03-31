@@ -83,56 +83,138 @@ public class MovieImportService {
     }
 
     public Boolean saveMovieInventory(String[] record, Integer lineCounter, List<String> errorList){
-        if(record.length == 3) {
-            Optional<MovieInventory> movieInventoryRecord =  movieInventoryRepository.findByImdbId(record[0]);
-            if(movieInventoryRecord.isPresent()){
-                MovieInventory  movieInventory = movieInventoryRecord.get();
-                Integer stockCount = Integer.parseInt(record[2]);
-                movieInventory.addStock(stockCount);
-                movieInventoryRepository.save(movieInventory);
+        if(record.length == 4) {
+            if(record[0].equals("InsertMovie")){
+                return insertMovie(record, lineCounter, errorList);
+            }
+            else if(record[0].equals("AddStock")){
+                return addStock(record, lineCounter, errorList);
+            }
+            else if(record[0].equals("RemoveStock")){
+                return removeStock(record, lineCounter, errorList);
+            }
+            else if(record[0].equals("UpdatePricing")){
+                return updatePricing(record, lineCounter, errorList);
+            }
+            return false;
+        }
+        else{
+            StringBuilder sb = new StringBuilder();
+            sb.append("Line ").append(lineCounter).append(" Column count mismatch.");
+            errorList.add(sb.toString());
+            return false;
+        }
+    }
+
+    private Boolean updatePricing(String[] record, Integer lineCounter, List<String> errorList) {
+        Optional<Movie> movieRecord =  movieRepository.findByImdbId(record[1]);
+        Optional<PricingCategory>  pricingCategoryRecord = pricingCategoryRepository.findByName(record[2]);
+        if(movieRecord.isPresent()){
+            if(pricingCategoryRecord.isPresent()){
+                PricingCategory pricingCategory = pricingCategoryRecord.get();
+                Movie movie = movieRecord.get();
+                movie.setPricingCategory(pricingCategory);
+                movieRepository.save(movie);
                 return true;
             }
             else{
-                Movie movie = constructMovie(record, lineCounter, errorList);
-                if (movie != null) {
-                    Integer stockCount = Integer.parseInt(record[2]);
-                    movie = movieRepository.save(movie);
-                    MovieInventory movieInventory = new MovieInventory(movie, stockCount);
-                    movieInventoryRepository.save(movieInventory);
-                    return true;
-                }
-                else {
-                    return false;
-                }
+                StringBuilder sb = new StringBuilder();
+                sb.append("Line ").append(lineCounter).append(" (Update Pricing) Pricing Category not exists.");
+                errorList.add(sb.toString());
+                return false;
             }
         }
         else{
             StringBuilder sb = new StringBuilder();
-            sb.append("Line ").append(lineCounter).append(" has data mismatch");
+            sb.append("Line ").append(lineCounter).append(" (Update Pricing) Movie not exists.");
             errorList.add(sb.toString());
             return false;
+        }
+    }
+
+    private Boolean removeStock(String[] record, Integer lineCounter, List<String> errorList) {
+        Optional<MovieInventory> movieInventoryRecord =  movieInventoryRepository.findByImdbId(record[1]);
+        if(movieInventoryRecord.isPresent()){
+            try {
+                MovieInventory  movieInventory = movieInventoryRecord.get();
+                Integer stockCount = Integer.parseInt(record[3]);
+                movieInventory.removeStock(stockCount);
+                movieInventoryRepository.save(movieInventory);
+                return true;
+            } catch (Exception e) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Line ").append(lineCounter).append(" (Remove Stock) ").append(e.getMessage());
+                errorList.add(sb.toString());
+                return false;
+            }
+        }
+        else{
+            StringBuilder sb = new StringBuilder();
+            sb.append("Line ").append(lineCounter).append(" (Remove Stock) Movie not exists.");
+            errorList.add(sb.toString());
+            return false;
+        }
+    }
+
+    private Boolean addStock(String[] record, Integer lineCounter, List<String> errorList) {
+        Optional<MovieInventory> movieInventoryRecord =  movieInventoryRepository.findByImdbId(record[1]);
+        if(movieInventoryRecord.isPresent()){
+            MovieInventory  movieInventory = movieInventoryRecord.get();
+            Integer stockCount = Integer.parseInt(record[3]);
+            movieInventory.addStock(stockCount);
+            movieInventoryRepository.save(movieInventory);
+            return true;
+        }
+        else{
+            StringBuilder sb = new StringBuilder();
+            sb.append("Line ").append(lineCounter).append(" (Add Stock) Movie not exists.");
+            errorList.add(sb.toString());
+            return false;
+        }
+    }
+
+    private Boolean insertMovie(String[] record, Integer lineCounter, List<String> errorList) {
+        Optional<MovieInventory> movieInventoryRecord =  movieInventoryRepository.findByImdbId(record[1]);
+        if(movieInventoryRecord.isPresent()){
+            StringBuilder sb = new StringBuilder();
+            sb.append("Line ").append(lineCounter).append(" (Insert) Movie already exists.");
+            errorList.add(sb.toString());
+            return false;
+        }
+        else{
+            Movie movie = constructMovie(record, lineCounter, errorList);
+            if (movie != null) {
+                Integer stockCount = Integer.parseInt(record[3]);
+                movie = movieRepository.save(movie);
+                MovieInventory movieInventory = new MovieInventory(movie, stockCount);
+                movieInventoryRepository.save(movieInventory);
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     }
 
     public Movie constructMovie(String[] record, Integer lineCounter, List<String> errorList) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
         Movie movie = null;
-        Optional<PricingCategory>  pricingCategoryRecord = pricingCategoryRepository.findByName(record[1]);
+        Optional<PricingCategory>  pricingCategoryRecord = pricingCategoryRepository.findByName(record[2]);
         if(pricingCategoryRecord.isPresent()){
             try {
-                movie = constructMovieFromApi(record[0],pricingCategoryRecord.get());
+                movie = constructMovieFromApi(record[1],pricingCategoryRecord.get());
             }
             catch (IOException | NullPointerException e){
                 StringBuilder sb = new StringBuilder();
                 sb.append("Line ");
                 sb.append(lineCounter);
-                sb.append(" Unable to get Movie Details From API");
+                sb.append(" (Insert) Unable to get Movie Details From API.");
                 errorList.add(sb.toString());
             }
         }
         else{
             StringBuilder sb = new StringBuilder();
-            sb.append("Line ").append(lineCounter).append(" has invalid pricing type");
+            sb.append("Line ").append(lineCounter).append(" (Insert) has invalid pricing type.");
             errorList.add(sb.toString());
         }
         return movie;

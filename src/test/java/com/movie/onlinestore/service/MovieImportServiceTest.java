@@ -74,29 +74,29 @@ public class MovieImportServiceTest {
 
     @Test
     public void testSaveMovieInventoryWithInvalidRecord() throws ParseException {
-        String[] record = {"Poltergeist","A family's home is haunted by a host of demonic ghosts."};
+        String[] record = {"InsertMovie","Poltergeist","A family's home is haunted by a host of demonic ghosts."};
         List<String> errorList = new ArrayList<>();
         Boolean status = movieImportService.saveMovieInventory(record,1,errorList);
         assertFalse(status);
         assertEquals(1,errorList.size());
-        assertEquals("Line 1 has data mismatch",errorList.get(0));
+        assertEquals("Line 1 Column count mismatch.",errorList.get(0));
     }
 
     @Test
     public void testSaveMovieInventoryWithInvalidPriceCategoryName() throws ParseException {
-        String[] record = {"tt0084516","Clasic","6"};
+        String[] record = {"InsertMovie","tt0084516","Clasic","6"};
         List<String> errorList = new ArrayList<>();
         when(pricingCategoryRepository.findByName("Clasic")).thenReturn(Optional.empty());
         Boolean status = movieImportService.saveMovieInventory(record,1,errorList);
         assertFalse(status);
         assertEquals(1,errorList.size());
-        assertEquals("Line 1 has invalid pricing type",errorList.get(0));
+        assertEquals("Line 1 (Insert) has invalid pricing type.",errorList.get(0));
     }
 
 
     @Test
     public void testConstructMovieInventoryWithValidRecord() throws ParseException {
-        String[] record = {"tt0084516","Default","6"};
+        String[] record = {"InsertMovie","tt0084516","Default","6"};
         List<String> errorList = new ArrayList<>();
         PricingCategory pricingCategory = new PricingCategory(1L,"Default",3.25D,5,1D);
         when(pricingCategoryRepository.findByName("Default")).thenReturn(Optional.of(pricingCategory));

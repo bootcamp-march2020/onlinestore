@@ -55,4 +55,8 @@ public class MovieInventory {
         return totalCount;
     }
 
+    public void addStock(Integer stockCount) {
+        this.totalCount += stockCount;
+        this.availableCount += stockCount;
+    }
 }

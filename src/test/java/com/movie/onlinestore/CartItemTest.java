@@ -17,7 +17,7 @@ public class CartItemTest {
     @Test
     public void testCartItemCostCalculation() throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Movie movie = new Movie(1l,"Iron Man","After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.","PG-13",2008,"https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",sdf.parse("2008-05-02"),7.9,"Movie",new PricingCategory(1L,"Default",3D,5,1D));
+        Movie movie = new Movie(1l,"imdbId1","Iron Man","After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.","PG-13",2008,"https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",sdf.parse("2008-05-02"),7.9,"Movie",new PricingCategory(1L,"Default",3D,5,1D));
         CartItem cartItem = new CartItem(movie,10);
         Double expectedCost = 8D;
         assertEquals(expectedCost,cartItem.getCost());

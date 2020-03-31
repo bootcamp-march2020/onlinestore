@@ -1,5 +1,6 @@
 package com.movie.onlinestore.service;
 
+import com.movie.onlinestore.ImportFileReder;
 import com.movie.onlinestore.model.*;
 import com.movie.onlinestore.repository.*;
 import com.opencsv.CSVReader;
@@ -39,6 +40,8 @@ public class MovieImportService {
     MovieRepository movieRepository;
     @Autowired
     MovieInventoryRepository movieInventoryRepository;
+    @Autowired
+    ImportFileReder importFileReder;
 
     @Value( "${importdata.prefix}" )
     private String urlPrefix;
@@ -54,29 +57,20 @@ public class MovieImportService {
 
     @Transactional
     public String importFile(String fileName){
-        List<MovieInventory> movieInventoryList = new ArrayList<>();
+        Integer successCount = 0;
         List<String> errorList = new ArrayList<String>();
         String message = "";
         try {
-            URL url = new URL(urlPrefix + fileName);
-            CSVReader csvReader = new CSVReader(new InputStreamReader(url.openStream()));
-            String[] record;
-            Integer lineCounter = 0;
-            if (csvReader.readNext() != null) {
-                while ((record = csvReader.readNext()) != null) {
-                    lineCounter++;
-                     Movie movie = constructMovie(record, lineCounter, errorList);
-                    if (movie != null) {
-                        Integer stockCount = Integer.parseInt(record[2]);
-                        movie = movieRepository.save(movie);
-                        MovieInventory movieInventory = new MovieInventory(movie, stockCount);
-                        movieInventory = movieInventoryRepository.save(movieInventory);
-                        movieInventoryList.add(movieInventory);
-                    }
+            List<String[]> recordList = importFileReder.obtainRecords(fileName);
+            Integer lineCount = 0;
+            for(String[] record : recordList){
+                lineCount++;
+                if(saveMovieInventory(record,lineCount,errorList)){
+                    successCount++;
                 }
             }
             StringBuilder sb = new StringBuilder();
-            sb.append(lineCounter).append(" records are in the file. ").append(movieInventoryList.size()).append(" records inserted successfully. ")
+            sb.append(lineCount).append(" records are in the file. ").append(successCount).append(" records inserted/updated successfully. ")
                     .append(errorList.size()).append(" records has errors. ").append(String.join(" ",errorList));
             message = sb.toString();
             ImportedFile importedFile = new ImportedFile(fileName,message);
@@ -88,32 +82,57 @@ public class MovieImportService {
         return message;
     }
 
-    public Movie constructMovie(String[] record, Integer lineCounter, List<String> errorList) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
-        Movie movie = null;
-        if(record.length == 3){
-            Optional<PricingCategory>  pricingCategoryRecord = pricingCategoryRepository.findByName(record[1]);
-            if(pricingCategoryRecord.isPresent()){
-                try {
-                    movie = constructMovieFromApi(record[0],pricingCategoryRecord.get());
-                }
-                catch (IOException ioe){
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Line ");
-                    sb.append(lineCounter);
-                    sb.append(" Unable to get Movie Details From API");
-                    errorList.add(sb.toString());
-                }
+    public Boolean saveMovieInventory(String[] record, Integer lineCounter, List<String> errorList){
+        if(record.length == 3) {
+            Optional<MovieInventory> movieInventoryRecord =  movieInventoryRepository.findByImdbId(record[0]);
+            if(movieInventoryRecord.isPresent()){
+                MovieInventory  movieInventory = movieInventoryRecord.get();
+                Integer stockCount = Integer.parseInt(record[2]);
+                movieInventory.addStock(stockCount);
+                movieInventoryRepository.save(movieInventory);
+                return true;
             }
             else{
-                StringBuilder sb = new StringBuilder();
-                sb.append("Line ").append(lineCounter).append(" has invalid pricing type");
-                errorList.add(sb.toString());
+                Movie movie = constructMovie(record, lineCounter, errorList);
+                if (movie != null) {
+                    Integer stockCount = Integer.parseInt(record[2]);
+                    movie = movieRepository.save(movie);
+                    MovieInventory movieInventory = new MovieInventory(movie, stockCount);
+                    movieInventoryRepository.save(movieInventory);
+                    return true;
+                }
+                else {
+                    return false;
+                }
             }
         }
         else{
             StringBuilder sb = new StringBuilder();
             sb.append("Line ").append(lineCounter).append(" has data mismatch");
+            errorList.add(sb.toString());
+            return false;
+        }
+    }
+
+    public Movie constructMovie(String[] record, Integer lineCounter, List<String> errorList) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+        Movie movie = null;
+        Optional<PricingCategory>  pricingCategoryRecord = pricingCategoryRepository.findByName(record[1]);
+        if(pricingCategoryRecord.isPresent()){
+            try {
+                movie = constructMovieFromApi(record[0],pricingCategoryRecord.get());
+            }
+            catch (IOException | NullPointerException e){
+                StringBuilder sb = new StringBuilder();
+                sb.append("Line ");
+                sb.append(lineCounter);
+                sb.append(" Unable to get Movie Details From API");
+                errorList.add(sb.toString());
+            }
+        }
+        else{
+            StringBuilder sb = new StringBuilder();
+            sb.append("Line ").append(lineCounter).append(" has invalid pricing type");
             errorList.add(sb.toString());
         }
         return movie;
@@ -126,6 +145,7 @@ public class MovieImportService {
             URL url = new URL(apiUrl+"?apikey="+apiKey+"&i="+movieId);
             Object obj = new JSONParser().parse(new InputStreamReader(url.openStream()));
             JSONObject jo = (JSONObject) obj;
+            String imdbId = jo.get("imdbID").toString();
             String title = jo.get("Title").toString();
             String description = jo.get("Plot").toString();
             String rated = jo.get("Rated").toString();
@@ -134,7 +154,7 @@ public class MovieImportService {
             Date releaseDate = sdf.parse(jo.get("Released").toString());
             Double ratings = Double.parseDouble(jo.get("imdbRating").toString());
             String type = "Movie";
-            movie = new Movie(null, title, description, rated, year, posterUrlString, releaseDate, ratings, type, pricingCategory);
+            movie = new Movie(null,imdbId, title, description, rated, year, posterUrlString, releaseDate, ratings, type, pricingCategory);
             addActorsToMovie(movie, jo.get("Actors").toString());
             addDirectorsToMovie(movie, jo.get("Director").toString());
             addLanguagesToMovie(movie, jo.get("Language").toString());
@@ -222,5 +242,9 @@ public class MovieImportService {
 
     public void setMovieInventoryRepository(MovieInventoryRepository movieInventoryRepository) {
         this.movieInventoryRepository = movieInventoryRepository;
+    }
+
+    public void setImportFileReder(ImportFileReder importFileReder) {
+        this.importFileReder = importFileReder;
     }
 }

@@ -17,6 +17,9 @@ public class Movie {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long mid;
 
+    @Column(name = "imdb_id")
+    private  String imdbId;
+
     @Column(name = "title")
     private String title;
 
@@ -80,8 +83,9 @@ public class Movie {
         this.genreSet = new HashSet<>();
     }
 
-    public Movie(Long mid, String title, String description, String rated, Integer year, String posterUrlString, Date releaseDate, Double ratings, String type, PricingCategory pricingCategory){
+    public Movie(Long mid, String imdbId, String title, String description, String rated, Integer year, String posterUrlString, Date releaseDate, Double ratings, String type, PricingCategory pricingCategory){
         this.mid = mid;
+        this.imdbId = imdbId;
         this.title = title;
         this.description = description;
         this.rated = rated;
@@ -104,6 +108,10 @@ public class Movie {
     public void setMid(Long mid) {
         this.mid = mid;
     }
+
+    public String getImdbId() { return imdbId; }
+
+    public void setImdbId(String imdbId) { this.imdbId = imdbId; }
 
     public String getTitle() {
         return title;
@@ -235,6 +243,7 @@ public class Movie {
         if (o == null || getClass() != o.getClass()) return false;
         Movie movie = (Movie) o;
         return Objects.equals(mid, movie.mid) &&
+                Objects.equals(imdbId, movie.imdbId) &&
                 Objects.equals(title, movie.title) &&
                 Objects.equals(description, movie.description) &&
                 Objects.equals(rated, movie.rated) &&
@@ -252,6 +261,6 @@ public class Movie {
 
     @Override
     public int hashCode() {
-        return Objects.hash(mid, title, description, rated, year, posterUrlString, releaseDate, ratings, type, pricingCategory, actorSet, directorSet, languageSet, genreSet);
+        return Objects.hash(mid, imdbId, title, description, rated, year, posterUrlString, releaseDate, ratings, type, pricingCategory, actorSet, directorSet, languageSet, genreSet);
     }
 }

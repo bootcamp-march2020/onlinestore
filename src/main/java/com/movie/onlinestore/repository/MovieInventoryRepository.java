@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.sql.ResultSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -18,5 +18,8 @@ public interface MovieInventoryRepository extends JpaRepository<MovieInventory, 
     @Modifying
     @Transactional
     void updateMovieInventory(Set<Long> movieIds);
+
+    @Query("SELECT movieInventory FROM MovieInventory movieInventory WHERE movieInventory.movie.imdbId = ?1")
+    Optional<MovieInventory> findByImdbId(String imdbId);
 }
 

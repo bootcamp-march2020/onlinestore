@@ -6,7 +6,7 @@
 
 CREATE TABLE public.actor (
 	id bigserial NOT NULL,
-	"name" varchar(255) NULL,
+	name varchar(255) NULL,
 	CONSTRAINT actor_pkey PRIMARY KEY (id)
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE public.actor (
 
 CREATE TABLE public.director (
 	id bigserial NOT NULL,
-	"name" varchar(255) NULL,
+    name varchar(255) NULL,
 	CONSTRAINT director_pkey PRIMARY KEY (id)
 );
 
@@ -32,7 +32,7 @@ CREATE TABLE public.director (
 
 CREATE TABLE public.genre (
 	id bigserial NOT NULL,
-	"name" varchar(255) NULL,
+    name varchar(255) NULL,
 	CONSTRAINT genre_pkey PRIMARY KEY (id)
 );
 
@@ -60,7 +60,7 @@ CREATE TABLE public.imported_file (
 
 CREATE TABLE public.languages (
 	id bigserial NOT NULL,
-	"name" varchar(255) NULL,
+    name varchar(255) NULL,
 	CONSTRAINT languages_pkey PRIMARY KEY (id)
 );
 
@@ -76,7 +76,7 @@ CREATE TABLE public.pricing_caregory (
 	additional_cost float8 NULL,
 	cutoff_days int4 NULL,
 	initial_cost float8 NULL,
-	"name" varchar(255) NULL,
+    name varchar(255) NULL,
 	CONSTRAINT pricing_caregory_pkey PRIMARY KEY (id)
 );
 
@@ -90,7 +90,7 @@ CREATE TABLE public.pricing_caregory (
 CREATE TABLE public.users (
 	user_id varchar(255) NOT NULL,
 	email varchar(255) NULL,
-	"name" varchar(255) NULL,
+	name varchar(255) NULL,
 	CONSTRAINT users_pkey PRIMARY KEY (user_id)
 );
 
@@ -103,14 +103,15 @@ CREATE TABLE public.users (
 
 CREATE TABLE public.movie (
 	mid bigserial NOT NULL,
+    imdb_id varchar(255) NULL,
 	description varchar(255) NULL,
 	poster_url varchar(255) NULL,
 	rated varchar(255) NULL,
 	ratings float8 NULL,
 	release_date timestamp NULL,
 	title varchar(255) NULL,
-	"type" varchar(255) NULL,
-	"year" int4 NULL,
+	type varchar(255) NULL,
+	year int4 NULL,
 	pricing_category_id int8 NULL,
 	CONSTRAINT movie_pkey PRIMARY KEY (mid),
 	CONSTRAINT fkli1u0uk5x8018ic44lfnlfdcb FOREIGN KEY (pricing_category_id) REFERENCES pricing_caregory(id)

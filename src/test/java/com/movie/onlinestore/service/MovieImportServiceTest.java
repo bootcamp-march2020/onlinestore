@@ -1,5 +1,6 @@
 package com.movie.onlinestore.service;
 
+import com.movie.onlinestore.ImportFileReder;
 import com.movie.onlinestore.model.*;
 import com.movie.onlinestore.repository.*;
 import com.movie.onlinestore.service.MovieImportService;
@@ -29,6 +30,7 @@ public class MovieImportServiceTest {
     LanguageRepository languageRepository;
     MovieRepository movieRepository;
     MovieInventoryRepository movieInventoryRepository;
+    ImportFileReder importFileReder;
 
     @BeforeEach
     public void setUp(){
@@ -50,6 +52,8 @@ public class MovieImportServiceTest {
         movieInventoryRepository = mock(MovieInventoryRepository.class);
         movieImportService.setMovieInventoryRepository(movieInventoryRepository);
         movieImportService.setApiDetails("http://www.omdbapi.com/","343f7128");
+        importFileReder = mock(ImportFileReder.class);
+        movieImportService.setImportFileReder(importFileReder);
     }
 
     @Test
@@ -69,30 +73,30 @@ public class MovieImportServiceTest {
 
 
     @Test
-    public void testConstructMovieInventoryWithInvalidRecord() throws ParseException {
-        String[] record = {"Poltergeist","A family's home is haunted by a host of demonic ghosts."};
+    public void testSaveMovieInventoryWithInvalidRecord() throws ParseException {
+        String[] record = {"InsertMovie","Poltergeist","A family's home is haunted by a host of demonic ghosts."};
         List<String> errorList = new ArrayList<>();
-        Movie movie = movieImportService.constructMovie(record,1,errorList);
-        assertNull(movie);
+        Boolean status = movieImportService.saveMovieInventory(record,1,errorList);
+        assertFalse(status);
         assertEquals(1,errorList.size());
-        assertEquals("Line 1 has data mismatch",errorList.get(0));
+        assertEquals("Line 1 Column count mismatch.",errorList.get(0));
     }
 
     @Test
-    public void testConstructMovieInventoryWithInvalidPriceCategoryName() throws ParseException {
-        String[] record = {"tt0084516","Clasic","6"};
+    public void testSaveMovieInventoryWithInvalidPriceCategoryName() throws ParseException {
+        String[] record = {"InsertMovie","tt0084516","Clasic","6"};
         List<String> errorList = new ArrayList<>();
         when(pricingCategoryRepository.findByName("Clasic")).thenReturn(Optional.empty());
-        Movie movie = movieImportService.constructMovie(record,1,errorList);
-        assertNull(movie);
+        Boolean status = movieImportService.saveMovieInventory(record,1,errorList);
+        assertFalse(status);
         assertEquals(1,errorList.size());
-        assertEquals("Line 1 has invalid pricing type",errorList.get(0));
+        assertEquals("Line 1 (Insert) has invalid pricing type.",errorList.get(0));
     }
 
 
     @Test
     public void testConstructMovieInventoryWithValidRecord() throws ParseException {
-        String[] record = {"tt0084516","Default","6"};
+        String[] record = {"InsertMovie","tt0084516","Default","6"};
         List<String> errorList = new ArrayList<>();
         PricingCategory pricingCategory = new PricingCategory(1L,"Default",3.25D,5,1D);
         when(pricingCategoryRepository.findByName("Default")).thenReturn(Optional.of(pricingCategory));
@@ -113,7 +117,7 @@ public class MovieImportServiceTest {
         when(genreRepository.findOrCreate("Horror")).thenReturn(genre1);
         when(genreRepository.findOrCreate("Thriller")).thenReturn(genre2);
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
-        Movie expectedMovie  = new Movie(null,"Poltergeist","A family's home is haunted by a host of demonic ghosts.","PG",1982,"https://m.media-amazon.com/images/M/MV5BNzliZmRlYTctYmNkYS00NzE5LWI1OWQtMTRiODY5MDMwMTVkXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",sdf.parse("04 Jun 1982"),7.3D,"Movie",pricingCategory);
+        Movie expectedMovie  = new Movie(null,"tt0084516","Poltergeist","A family's home is haunted by a host of demonic ghosts.","PG",1982,"https://m.media-amazon.com/images/M/MV5BNzliZmRlYTctYmNkYS00NzE5LWI1OWQtMTRiODY5MDMwMTVkXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",sdf.parse("04 Jun 1982"),7.3D,"Movie",pricingCategory);
         expectedMovie.addToActorSet(actor1);
         expectedMovie.addToActorSet(actor2);
         expectedMovie.addToActorSet(actor3);
@@ -149,7 +153,7 @@ public class MovieImportServiceTest {
         when(genreRepository.findOrCreate("Horror")).thenReturn(genre1);
         when(genreRepository.findOrCreate("Thriller")).thenReturn(genre2);
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
-        Movie expectedMovie  = new Movie(null,"Poltergeist","A family's home is haunted by a host of demonic ghosts.","PG",1982,"https://m.media-amazon.com/images/M/MV5BNzliZmRlYTctYmNkYS00NzE5LWI1OWQtMTRiODY5MDMwMTVkXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",sdf.parse("04 Jun 1982"),7.3D,"Movie",pricingCategory);
+        Movie expectedMovie  = new Movie(null,"tt0084516","Poltergeist","A family's home is haunted by a host of demonic ghosts.","PG",1982,"https://m.media-amazon.com/images/M/MV5BNzliZmRlYTctYmNkYS00NzE5LWI1OWQtMTRiODY5MDMwMTVkXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",sdf.parse("04 Jun 1982"),7.3D,"Movie",pricingCategory);
         expectedMovie.addToActorSet(actor1);
         expectedMovie.addToActorSet(actor2);
         expectedMovie.addToActorSet(actor3);
